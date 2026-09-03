@@ -215,22 +215,22 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
   const currentDiagram = selectedChord ? CHORD_DIAGRAMS[selectedChord] : null;
 
   return (
-    <div className="bg-[#f7f9fb] text-[#191c1e] min-h-screen flex flex-col font-sans transition-colors duration-300 relative border border-[#c3c6d1] shadow-sm">
+    <div className="bg-[#f7f9fb] text-[#191c1e] h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col font-sans transition-colors duration-300 relative border border-[#c3c6d1] shadow-sm">
       {/* Top AppBar */}
-      <header className="bg-white sticky top-0 w-full px-4 md:px-12 h-16 z-50 flex justify-between items-center border-b border-[#c3c6d1]/50 shadow-2xs">
-        <div className="flex items-center gap-2 sm:gap-3">
+      <header className="bg-white sticky top-0 w-full px-4 sm:px-6 md:px-8 lg:px-12 h-14 sm:h-16 z-50 flex justify-between items-center border-b border-[#c3c6d1]/50 shadow-2xs">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
           <button
             onClick={onBack}
-            className="hover:bg-[#f2f4f6] p-2 rounded-full transition-all text-[#00305d] cursor-pointer flex items-center justify-center"
+            className="hover:bg-[#f2f4f6] p-2 rounded-full transition-all text-[#00305d] cursor-pointer flex items-center justify-center shrink-0 min-w-[44px] min-h-[44px]"
             title="Volver a la lista"
           >
             <span className="material-symbols-outlined text-2xl">arrow_back</span>
           </button>
-          <h1 className="font-semibold text-lg sm:text-xl text-[#00305d] tracking-tight truncate max-w-[200px] sm:max-w-xs md:max-w-md">
+          <h1 className="font-semibold text-base sm:text-lg md:text-xl text-[#00305d] tracking-tight truncate max-w-[150px] sm:max-w-[220px] md:max-w-md lg:max-w-lg">
             {song.title}
           </h1>
           <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ml-1 hidden xs:inline ${
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ml-1 hidden sm:inline shrink-0 ${
               song.tag === 'CONGRE'
                 ? 'bg-[#6bfad9] text-[#00725f]'
                 : 'bg-[#E2E8F0] text-[#1A477A]'
@@ -254,7 +254,7 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
       </header>
 
       {/* Accompaniment Bar */}
-      <nav className="bg-white px-4 md:px-12 py-3 border-b border-[#c3c6d1]/50 flex flex-wrap items-center gap-4 sticky top-16 z-40 shadow-xs justify-start">
+      <nav className="bg-white px-4 sm:px-6 md:px-8 lg:px-12 py-3 border-b border-[#c3c6d1]/50 flex flex-wrap items-center gap-3 sm:gap-4 sticky top-14 sm:top-16 z-40 shadow-xs justify-start">
         {/* Play Control */}
         <div className="flex items-center">
           <button
@@ -322,10 +322,10 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
         </div>
       </nav>
 
-      {/* Main Song Content */}
-      <main className="max-w-4xl mx-auto px-4 md:px-12 pt-10 pb-32 flex gap-8 relative min-h-screen w-full">
+      {/* Main Song Content - scroll interno para no exceder viewport */}
+      <main className="flex-1 min-h-0 overflow-y-auto max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-4 sm:pt-6 pb-20 md:pb-6 flex gap-4 md:gap-8 relative w-full">
         {/* Song Lyrics Area */}
-        <div className="flex-grow max-w-3xl transition-all duration-300 space-y-10">
+        <div className="flex-grow max-w-3xl transition-all duration-300 space-y-6 md:space-y-8 pr-0 md:pr-2">
           {song.sections.map((section, secIdx) => (
             <div
               key={secIdx}
@@ -421,8 +421,25 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
           ))}
         </div>
 
-        {/* Floating Right Vertical Sidebar - optimizada: barra -30% pero transposición legible */}
-        <aside className="fixed right-2 md:right-4 top-1/2 -translate-y-1/2 z-50">
+        {/* Responsive Sidebar: horizontal bottom bar en móvil/tablet chica, vertical flotante en md+ */}
+        {/* Mobile/Tablet horizontal bar */}
+        <aside className="fixed bottom-0 left-0 right-0 z-40 flex md:hidden justify-center p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-white via-white to-transparent pointer-events-none">
+          <div className="floating-sidebar bg-white border border-[#c3c6d1] rounded-2xl px-2 py-2 flex flex-row gap-1 items-center shadow-xl pointer-events-auto overflow-x-auto max-w-[98vw]">
+            <button onClick={() => handleTranspose(-1)} className="min-w-[40px] h-9 flex items-center justify-center rounded-xl hover:bg-[#f2f4f6] text-[#00305d] font-bold text-[13px] cursor-pointer shrink-0">- ♪</button>
+            <button onClick={handleResetTranspose} className="min-w-[44px] h-9 flex items-center justify-center rounded-xl hover:bg-[#f2f4f6] text-[#43474f] font-semibold text-[11px] cursor-pointer shrink-0">Orig.</button>
+            <button onClick={() => handleTranspose(1)} className="min-w-[40px] h-9 flex items-center justify-center rounded-xl hover:bg-[#f2f4f6] text-[#00305d] font-bold text-[13px] cursor-pointer shrink-0">+ ♪</button>
+            <div className="w-px h-6 bg-[#c3c6d1] mx-1 shrink-0" />
+            <button onClick={() => handleChangeFontSize(2)} className="min-w-[40px] h-9 flex items-center justify-center rounded-xl hover:bg-[#f2f4f6] text-[#00305d] font-bold text-[13px] cursor-pointer shrink-0">A+</button>
+            <button onClick={() => handleChangeFontSize(-2)} className="min-w-[40px] h-9 flex items-center justify-center rounded-xl hover:bg-[#f2f4f6] text-[#43474f] font-semibold text-[13px] cursor-pointer shrink-0">A-</button>
+            <div className="w-px h-6 bg-[#c3c6d1] mx-1 shrink-0" />
+            <button onClick={handleTogglePlay} className={`min-w-[40px] h-9 flex items-center justify-center rounded-xl cursor-pointer shrink-0 ${isPlaying ? 'bg-[#00305d] text-white' : 'hover:bg-[#f2f4f6] text-[#00305d]'}`}><span className="material-symbols-outlined text-[18px]">{isPlaying ? 'pause' : 'play_arrow'}</span></button>
+            <button onClick={handleToggleAutoScroll} className={`min-w-[40px] h-9 flex items-center justify-center rounded-xl cursor-pointer shrink-0 ${isAutoScrolling ? 'bg-[#3ED5B6] text-white' : 'hover:bg-[#f2f4f6] text-[#43474f]'}`}><span className="material-symbols-outlined text-[18px]">keyboard_double_arrow_down</span></button>
+            <button onClick={handleToggleFullScreen} className="min-w-[40px] h-9 flex items-center justify-center rounded-xl hover:bg-[#f2f4f6] text-[#43474f] cursor-pointer shrink-0"><span className="material-symbols-outlined text-[18px]">fullscreen</span></button>
+            <button onClick={() => setIsPrintModalOpen(true)} className="min-w-[40px] h-9 flex items-center justify-center rounded-xl hover:bg-[#f2f4f6] text-[#43474f] cursor-pointer shrink-0"><span className="material-symbols-outlined text-[18px]">print</span></button>
+          </div>
+        </aside>
+        {/* Desktop vertical bar */}
+        <aside className="hidden md:flex fixed right-2 lg:right-4 top-1/2 -translate-y-1/2 z-50">
           <div className="floating-sidebar bg-white border border-[#c3c6d1] rounded-xl p-1 flex flex-col gap-0.5 items-center shadow-lg w-[44px]">
             <button
               onClick={() => handleTranspose(-1)}

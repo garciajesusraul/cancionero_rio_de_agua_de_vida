@@ -80,7 +80,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen p-2 md:p-4 ${userProfile.darkMode ? 'dark bg-slate-900 text-white' : 'bg-[#e9ecf0] text-[#191c1e]'}`}>
+    <div className={`h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col ${userProfile.darkMode ? 'dark bg-slate-900 text-white' : 'bg-[#e9ecf0] text-[#191c1e]'}`}>
       {/* Navigation Drawer */}
       <NavigationDrawer
         isOpen={isMenuOpen}

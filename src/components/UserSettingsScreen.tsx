@@ -68,10 +68,10 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
   const isDark = formData.darkMode;
 
   return (
-    <div className={`min-h-screen flex flex-col items-center font-sans pb-32 border shadow-sm ${isDark ? 'bg-slate-900 text-slate-100 border-slate-700' : 'bg-[#f7f9fb] text-[#191c1e] border-[#c3c6d1]'}`}>
+    <div className={`h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col items-center font-sans border shadow-sm ${isDark ? 'bg-slate-900 text-slate-100 border-slate-700' : 'bg-[#f7f9fb] text-[#191c1e] border-[#c3c6d1]'}`}>
       {/* Header */}
-      <header className={`w-full sticky top-0 border-b z-40 shadow-2xs ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-[#c3c6d1]/40'}`}>
-        <div className="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+      <header className={`w-full shrink-0 border-b z-40 shadow-2xs ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-[#c3c6d1]/40'}`}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h1 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-[#00305d]'}`}>Ajustes de Perfil</h1>
           </div>
@@ -86,9 +86,9 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
         </div>
       </header>
 
-      {/* Main Form Container */}
-      <main className="w-full max-w-xl px-4 pt-6 space-y-6">
-        {/* User Profile Card */}
+      {/* Main Form Container - en desktop 2 columnas para aprovechar horizontal */}
+      <main className="w-full max-w-5xl flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 md:px-8 pt-4 md:pt-6 space-y-4 md:space-y-6">
+        {/* User Profile Card - ancho completo */}
         <section className="bg-white border border-[#c3c6d1]/60 rounded-2xl p-6 text-center shadow-2xs relative overflow-hidden flow-bg">
           <div className="relative inline-block mb-4">
             {photoPreview || formData.photoUrl ? (
@@ -125,6 +125,8 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
           </p>
         </section>
 
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          <div className="space-y-4 md:space-y-6">
         {/* Section: Códigos de Congregación */}
         <section className="bg-white border border-[#c3c6d1]/60 rounded-2xl p-6 space-y-4 shadow-2xs">
           <div className="flex items-center gap-2 text-[#00305d] font-bold text-base">
@@ -296,7 +298,8 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
             </div>
           </div>
         </section>
-
+          </div>
+          <div className="space-y-4 md:space-y-6">
         {/* Section: Acompañamiento y Audio */}
         <section className="bg-white border border-[#c3c6d1]/60 rounded-2xl p-6 space-y-5 shadow-2xs">
           <div className="flex items-center gap-2 text-[#00305d] font-bold text-base">
@@ -540,6 +543,8 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
           >
             Cancelar
           </button>
+        </div>
+          </div>
         </div>
       </main>
 
