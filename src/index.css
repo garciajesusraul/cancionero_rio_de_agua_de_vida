@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-outlined.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.active-card {
+  border-color: #3ED5B6 !important;
+  background-color: #f2fdfb !important;
+  box-shadow: 0 0 0 2px #3ED5B6;
+}
+
+.flow-bg {
+  background: radial-gradient(circle at top left, #d4e3ff 0%, transparent 40%),
+              radial-gradient(circle at bottom right, #6bfad944 0%, transparent 40%);
+}
+
+.chord-text {
+  color: #1A477A;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.chord-text:hover {
+  color: #3ED5B6;
+}
+
+.lyrics-line {
+  line-height: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.floating-sidebar {
+  box-shadow: 0 4px 20px -5px rgba(26, 71, 122, 0.15);
+}
+
+.focus-glow:focus {
+  outline: none;
+  border-color: #3ED5B6;
+  box-shadow: 0 0 0 4px rgba(62, 213, 182, 0.15);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1A477A;
+}
+

@@ -1,0 +1,6 @@
+{
+  "name": "Río de Agua Viva",
+  "description": "Aplicación de música, repertorios, acordes y configuración congregacional para Río de Agua Viva.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
