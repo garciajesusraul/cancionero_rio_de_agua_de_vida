@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ScreenView, Song, UserProfile, Playlist } from './types';
 import { INITIAL_SONGS } from './data/songs';
+import { supabase } from './utils/supabase';
 import { NavigationDrawer } from './components/NavigationDrawer';
 import { SearchSongsScreen } from './components/SearchSongsScreen';
 import { SongModeScreen } from './components/SongModeScreen';
@@ -50,6 +51,7 @@ export default function App() {
       { id: 'rav', label: '#RAV', name: 'RIOS DE AGUA DE VIDA', createdAt: Date.now() - 50000 },
     ];
   });
+  const hasFetchedSupabase = useRef(false);
 
   const [userProfile, setUserProfile] = useState<UserProfile>({
     name: 'Elala Bador',
@@ -93,6 +95,125 @@ export default function App() {
   }, [selectedPlaylistId]);
   useEffect(() => { try { localStorage.setItem(SONGS_KEY, JSON.stringify(songs)); } catch {} }, [songs]);
   useEffect(() => { try { localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories)); } catch {} }, [categories]);
+
+  // --- Supabase sync ---
+  // Carga inicial desde Supabase (si hay datos, mergea sobre local)
+  useEffect(() => {
+    if (!supabase || hasFetchedSupabase.current) return;
+    hasFetchedSupabase.current = true;
+    (async () => {
+      try {
+        const [{ data: dbSongs }, { data: dbCats }, { data: dbPlaylists }] = await Promise.all([
+          supabase.from('songs').select('*'),
+          supabase.from('categories').select('*'),
+          supabase.from('playlists').select('*'),
+        ]);
+        if (dbSongs && dbSongs.length > 0) {
+          const mapped: Song[] = dbSongs.map((r: Record<string, unknown>) => ({
+            id: r.id as string,
+            title: r.title as string,
+            artist: r.artist as string,
+            tag: r.tag as Song['tag'],
+            category: r.category as string | undefined,
+            bpm: (r.bpm as number) || 70,
+            originalKey: (r.original_key as string) || (r.originalKey as string) || 'C',
+            sections: (r.sections as Song['sections']) || [],
+            isFavorite: r.is_favorite as boolean | undefined,
+            favoriteAt: r.favorite_at as number | undefined,
+            createdAt: r.created_at as number | undefined,
+          }));
+          setSongs((prev) => {
+            const ids = new Set(prev.map((s) => s.id));
+            const newFromDb = mapped.filter((s) => !ids.has(s.id));
+            // si hay canciones en DB que no están local, agregarlas
+            return newFromDb.length > 0 ? [...newFromDb, ...prev] : prev;
+          });
+        }
+        if (dbCats && dbCats.length > 0) {
+          const mappedCats: Category[] = dbCats.map((r: Record<string, unknown>) => ({
+            id: r.id as string,
+            label: r.label as string,
+            name: r.name as string,
+            createdAt: r.created_at as number,
+          }));
+          setCategories((prev) => {
+            const labels = new Set(prev.map((c) => c.label));
+            const add = mappedCats.filter((c) => !labels.has(c.label));
+            return add.length > 0 ? [...prev, ...add] : prev;
+          });
+        }
+        if (dbPlaylists && dbPlaylists.length > 0) {
+          const mappedPl: Playlist[] = dbPlaylists.map((r: Record<string, unknown>) => ({
+            id: r.id as string,
+            name: r.name as string,
+            songIds: (r.song_ids as string[]) || (r.songIds as string[]) || [],
+            createdAt: r.created_at as number,
+            updatedAt: r.updated_at as number,
+          }));
+          setPlaylists((prev) => {
+            const ids = new Set(prev.map((p) => p.id));
+            const add = mappedPl.filter((p) => !ids.has(p.id));
+            return add.length > 0 ? [...prev, ...add] : prev;
+          });
+        }
+      } catch (e) {
+        console.warn('Supabase fetch error', e);
+      }
+    })();
+  }, []);
+
+  // Push a Supabase en cada cambio (debounce simple)
+  useEffect(() => {
+    if (!supabase) return;
+    if (!hasFetchedSupabase.current) return;
+    const t = setTimeout(async () => {
+      try {
+        if (songs.length > 0) {
+          const rows = songs.slice(0, 200).map((s) => ({
+            id: s.id,
+            title: s.title,
+            artist: s.artist,
+            tag: s.tag,
+            category: s.category || null,
+            bpm: s.bpm,
+            original_key: s.originalKey,
+            sections: s.sections,
+            is_favorite: !!s.isFavorite,
+            favorite_at: s.favoriteAt || null,
+            created_at: s.createdAt || Date.now(),
+          }));
+          await supabase.from('songs').upsert(rows, { onConflict: 'id' });
+        }
+      } catch (e) { console.warn('Supabase upsert songs', e); }
+    }, 800);
+    return () => clearTimeout(t);
+  }, [songs]);
+
+  useEffect(() => {
+    if (!supabase || !hasFetchedSupabase.current) return;
+    const t = setTimeout(async () => {
+      try {
+        if (categories.length > 0) {
+          const rows = categories.map((c) => ({ id: c.id, label: c.label, name: c.name, created_at: c.createdAt }));
+          await supabase.from('categories').upsert(rows, { onConflict: 'id' });
+        }
+      } catch (e) { console.warn('Supabase upsert categories', e); }
+    }, 800);
+    return () => clearTimeout(t);
+  }, [categories]);
+
+  useEffect(() => {
+    if (!supabase || !hasFetchedSupabase.current) return;
+    const t = setTimeout(async () => {
+      try {
+        if (playlists.length > 0) {
+          const rows = playlists.map((p) => ({ id: p.id, name: p.name, song_ids: p.songIds, created_at: p.createdAt, updated_at: p.updatedAt }));
+          await supabase.from('playlists').upsert(rows, { onConflict: 'id' });
+        }
+      } catch (e) { console.warn('Supabase upsert playlists', e); }
+    }, 800);
+    return () => clearTimeout(t);
+  }, [playlists]);
 
   const handleToggleFavorite = (songId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -142,6 +263,7 @@ export default function App() {
   };
   const handleDeleteCategory = (id: string) => {
     setCategories((prev) => prev.filter((c) => c.id !== id));
+    if (supabase) supabase.from('categories').delete().eq('id', id).then(() => {}).catch(() => {});
   };
 
   const handleSaveSong = (song: Song) => {
@@ -170,6 +292,7 @@ export default function App() {
   const handleDeletePlaylist = (id: string) => {
     setPlaylists((prev) => prev.filter((p) => p.id !== id));
     if (selectedPlaylistId === id) setSelectedPlaylistId(null);
+    if (supabase) supabase.from('playlists').delete().eq('id', id).then(() => {}).catch(() => {});
   };
   const handleAddSongToPlaylist = (songId: string) => {
     if (!selectedPlaylistId) return;
