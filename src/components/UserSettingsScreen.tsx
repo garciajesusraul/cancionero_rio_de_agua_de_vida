@@ -7,6 +7,8 @@ interface UserSettingsScreenProps {
   onSave: (updated: UserProfile) => void;
   onCancel: () => void;
   onOpenMenu: () => void;
+  onAdminAccess?: (password: string) => boolean;
+  isAdmin?: boolean;
 }
 
 export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
@@ -14,6 +16,8 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
   onSave,
   onCancel,
   onOpenMenu,
+  onAdminAccess,
+  isAdmin,
 }) => {
   const [formData, setFormData] = useState<UserProfile>(profile);
   const [newCodeInput, setNewCodeInput] = useState('');
@@ -23,6 +27,9 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
   const [photoPreview, setPhotoPreview] = useState<string | null>(profile.photoUrl || null);
   const [previewPad, setPreviewPad] = useState<string | null>(null);
   const [previewDrum, setPreviewDrum] = useState<string | null>(null);
+  const [showAdminPrompt, setShowAdminPrompt] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminError, setAdminError] = useState<string | null>(null);
 
   useEffect(() => { return () => { audioEngine.stopPreviews(); }; }, []);
 
@@ -504,10 +511,10 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
             <h3>Cuenta</h3>
           </div>
 
-          <div className="p-4 bg-[#f2f4f6] rounded-xl flex items-center justify-between hover:bg-[#e6e8ea] transition-colors cursor-pointer">
+          <div onClick={() => { if (isAdmin) { setToastMessage('Ya sos admin ✅'); setTimeout(()=>setToastMessage(null),2000); } else setShowAdminPrompt(true); }} className="p-4 bg-[#f2f4f6] rounded-xl flex items-center justify-between hover:bg-[#e6e8ea] transition-colors cursor-pointer">
             <div>
               <div className="text-xs font-bold text-[#00305d]">
-                Acceso a Panel Admin
+                Acceso a Panel Admin {isAdmin && <span className="ml-1 px-1.5 py-0.5 bg-green-100 text-green-700 rounded text-[10px]">ADMIN</span>}
               </div>
               <div className="text-[11px] text-[#737780]">
                 Solo para administradores
@@ -517,6 +524,19 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
               chevron_right
             </span>
           </div>
+          {showAdminPrompt && (
+            <div className="bg-white border border-[#c3c6d1] rounded-xl p-3 space-y-2">
+              <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="Contraseña admin" className="w-full px-3 py-2.5 bg-white border border-[#c3c6d1] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#3ED5B6]" />
+              {adminError && <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-2 py-1.5">{adminError}</div>}
+              <div className="flex gap-2">
+                <button onClick={() => { setShowAdminPrompt(false); setAdminPassword(''); setAdminError(null); }} className="flex-1 py-2 bg-white border border-[#c3c6d1] rounded-lg text-xs font-bold cursor-pointer">Cancelar</button>
+                <button onClick={() => {
+                  if (onAdminAccess && onAdminAccess(adminPassword)) { setShowAdminPrompt(false); setAdminPassword(''); setAdminError(null); setToastMessage('Acceso admin concedido ✅'); setTimeout(()=>setToastMessage(null),2000); }
+                  else { setAdminError('Contraseña incorrecta'); }
+                }} className="flex-1 py-2 bg-[#1A477A] text-white rounded-lg text-xs font-bold hover:bg-[#00305d] cursor-pointer">Entrar</button>
+              </div>
+            </div>
+          )}
 
           <button
             type="button"

@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    font-size: 75%; /* reduce 25% todo el front (1rem = 12px) */
+  }
   body {
     font-family: 'Montserrat', sans-serif;
   }

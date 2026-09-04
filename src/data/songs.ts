@@ -62,6 +62,7 @@ export const INITIAL_SONGS: Song[] = [
     bpm: 74,
     originalKey: 'Em',
     isFavorite: true,
+    favoriteAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
     sections: [
       {
         title: 'VERSO 1',
@@ -130,6 +131,7 @@ export const INITIAL_SONGS: Song[] = [
     bpm: 72,
     originalKey: 'A',
     isFavorite: true,
+    favoriteAt: Date.now() - 1000 * 60 * 60 * 24,
     sections: [
       {
         title: 'VERSO 1',
@@ -155,5 +157,86 @@ export const INITIAL_SONGS: Song[] = [
         ]
       }
     ]
-  }
+  },
+  {
+    id: 'yeshua',
+    title: 'Yeshua',
+    artist: 'Instrumental / Ministración',
+    tag: 'CONGRE',
+    bpm: 66,
+    originalKey: 'D',
+    sections: [
+      {
+        title: 'VERSO 1',
+        lines: [
+          {
+            chordPro: '[D]Yeshua, nombre sobre todo [G]nombre',
+            lyrics: 'Yeshua, nombre sobre todo nombre',
+          },
+          {
+            chordPro: '[A]Rey de reyes, Señor de todo [D]corazón',
+            lyrics: 'Rey de reyes, Señor de todo corazón',
+          }
+        ]
+      },
+      {
+        title: 'CORO',
+        isChorus: true,
+        lines: [
+          {
+            chordPro: '[G]Yeshua, [D]eres digno de ado[A]rar',
+            lyrics: 'Yeshua, eres digno de adorar',
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'vistenos-de-danza',
+    title: 'Vístenos de Danza',
+    artist: 'Michael Bunster',
+    tag: 'MIO',
+    bpm: 88,
+    originalKey: 'G',
+    sections: [
+      { title: 'VERSO 1', lines: [{ chordPro: '[G]Vístenos de danza, [C]llénanos de gozo', lyrics: 'Vístenos de danza, llénanos de gozo' }] },
+      { title: 'CORO', isChorus: true, lines: [{ chordPro: '[D]Que tu río [G]fluya en este lugar', lyrics: 'Que tu río fluya en este lugar' }] },
+    ],
+  },
+  {
+    id: 'resplandece-tu-luz',
+    title: 'Resplandece tu Luz',
+    artist: 'Aragón – Weigandt',
+    tag: 'MIO',
+    bpm: 72,
+    originalKey: 'A',
+    sections: [
+      { title: 'VERSO 1', lines: [{ chordPro: '[A]Resplandece tu luz [D]sobre nosotros', lyrics: 'Resplandece tu luz sobre nosotros' }] },
+      { title: 'CORO', isChorus: true, lines: [{ chordPro: '[E]Brilla Jesús, [A]brilla en mí', lyrics: 'Brilla Jesús, brilla en mí' }] },
+    ],
+  },
+  {
+    id: 'al-que-esta-sentado',
+    title: 'Al que está sentado',
+    artist: 'Lucas Conslie',
+    tag: 'MIO',
+    bpm: 70,
+    originalKey: 'C',
+    sections: [
+      { title: 'VERSO 1', lines: [{ chordPro: '[C]Al que está sentado [G]en el trono', lyrics: 'Al que está sentado en el trono' }] },
+      { title: 'CORO', isChorus: true, lines: [{ chordPro: '[Am]Sea la gloria [F]y el honor', lyrics: 'Sea la gloria y el honor' }] },
+    ],
+  },
+  {
+    id: 'jesus-es-agua-de-vida',
+    title: 'Jesús es agua de vida',
+    artist: 'La Roca',
+    tag: 'MIO',
+    bpm: 76,
+    originalKey: 'D',
+    sections: [
+      { title: 'VERSO 1', lines: [{ chordPro: '[D]Jesús es agua de [G]vida que sacia mi sed', lyrics: 'Jesús es agua de vida que sacia mi sed' }] },
+      { title: 'CORO', isChorus: true, lines: [{ chordPro: '[A]Ríos de agua viva [D]fluyen en mí', lyrics: 'Ríos de agua viva fluyen en mí' }] },
+    ],
+  },
 ];

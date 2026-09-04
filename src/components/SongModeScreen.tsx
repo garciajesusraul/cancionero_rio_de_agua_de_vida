@@ -323,7 +323,7 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
       </nav>
 
       {/* Main Song Content - scroll interno para no exceder viewport */}
-      <main className="flex-1 min-h-0 overflow-y-auto max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-4 sm:pt-6 pb-20 md:pb-6 flex gap-4 md:gap-8 relative w-full">
+      <main className="flex-1 min-h-0 overflow-y-auto max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-4 sm:pt-6 pb-20 md:pb-6 flex gap-4 md:gap-8 relative w-full">
         {/* Song Lyrics Area */}
         <div className="flex-grow max-w-3xl transition-all duration-300 space-y-6 md:space-y-8 pr-0 md:pr-2">
           {song.sections.map((section, secIdx) => (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Song } from '../types';
 
 interface SearchSongsScreenProps {
@@ -18,6 +18,16 @@ export const SearchSongsScreen: React.FC<SearchSongsScreenProps> = ({
   const [recentList, setRecentList] = useState<Song[]>(songs.slice(0, 4));
   const [isListening, setIsListening] = useState(false);
 
+  // Sincroniza isFavorite/favoriteAt en recientes cuando cambia el estado global
+  useEffect(() => {
+    setRecentList((prev) =>
+      prev.map((r) => {
+        const updated = songs.find((s) => s.id === r.id);
+        return updated ? { ...r, isFavorite: updated.isFavorite, favoriteAt: updated.favoriteAt } : r;
+      })
+    );
+  }, [songs]);
+
   const filteredSongs = songs.filter(
     (s) =>
       s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -32,12 +42,12 @@ export const SearchSongsScreen: React.FC<SearchSongsScreenProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[440px] sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto h-[100dvh] max-h-[100dvh] flex flex-col bg-white border border-[#c3c6d1] shadow-sm font-sans overflow-hidden">
+    <div className="w-full max-w-6xl xl:max-w-7xl mx-auto h-[100dvh] max-h-[100dvh] flex flex-col bg-white border border-[#c3c6d1] shadow-sm font-sans overflow-hidden">
       <header className="shrink-0 p-3 sm:p-4 md:p-5 border-b border-gray-100 flex items-center justify-between gap-3">
         <div className="flex-grow leading-tight text-center px-1">
-          <p className="text-[13px] sm:text-[15px] md:text-[17px] leading-snug text-gray-800" style={{ fontFamily: "'Oleo Script', cursive" }}>
-            "El Padre busca verdaderos adoradores, que lo adoraren en espíritu y verdad"
-            <span style={{ marginLeft: '0.5em' }}>Juan 4.24/25</span>
+          <p className="text-[11px] sm:text-[13px] md:text-[15px] lg:text-[16px] leading-snug text-gray-800" style={{ fontFamily: "'Sniglet', cursive" }}>
+            "Esta es tu <span className="font-bold">verdadera adoración</span>, que, por las misericordias de Dios, presentes tu cuerpo como un sacrificio que está viviendo santa y agradablemente ante Dios"
+            <span style={{ marginLeft: '0.5em' }}>Romanos 12:1</span>
           </p>
         </div>
         <button onClick={onOpenMenu} className="shrink-0 bg-[#1A477A] text-white rounded-full w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center cursor-pointer hover:bg-[#00305d] active:scale-95 shadow-sm" title="Menú Principal">
