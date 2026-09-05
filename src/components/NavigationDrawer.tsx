@@ -6,6 +6,7 @@ interface NavigationDrawerProps {
   onClose: () => void;
   currentScreen: ScreenView;
   onNavigate: (screen: ScreenView) => void;
+  onLogout?: () => void;
   quote?: string;
   quoteRef?: string;
 }
@@ -15,6 +16,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   onClose,
   currentScreen,
   onNavigate,
+  onLogout,
 }) => {
   if (!isOpen) return null;
 
@@ -72,8 +74,13 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
           </div>
         </div>
 
-        <div className="py-2 sm:py-3 border-t border-[#c3c6d1]/30 bg-[#f7f9fb] text-center text-xs text-[#737780] shrink-0">
-          <span className="text-[10px] text-[#737780]/70 font-medium block">v2.4.0 • Río de Agua Viva</span>
+        <div className="py-2 sm:py-3 border-t border-[#c3c6d1]/30 bg-[#f7f9fb] text-center shrink-0 space-y-2">
+          {onLogout && (
+            <button onClick={() => { onClose(); onLogout(); }} className="mx-auto flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#ba1a1a] hover:bg-red-50 rounded-full border border-red-200 cursor-pointer">
+              <span className="material-symbols-outlined text-sm">logout</span> Cerrar sesión
+            </button>
+          )}
+          <span className="text-[10px] text-[#737780]/70 font-medium block">v3.5_casa_vacia • Río de Agua Viva</span>
         </div>
       </div>
     </div>

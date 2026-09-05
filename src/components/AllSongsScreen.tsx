@@ -6,6 +6,7 @@ interface AllSongsScreenProps {
   onSelectSong: (song: Song) => void;
   onOpenMenu: () => void;
   onToggleFavorite: (songId: string, e: React.MouseEvent) => void;
+  onDeleteSong?: (songId: string) => void;
 }
 
 export const AllSongsScreen: React.FC<AllSongsScreenProps> = ({
@@ -13,10 +14,13 @@ export const AllSongsScreen: React.FC<AllSongsScreenProps> = ({
   onSelectSong,
   onOpenMenu,
   onToggleFavorite,
+  onDeleteSong,
 }) => {
   // Solo dos pestañas por defecto: #MIO y #RAV en mayúsculas (como pedido)
   const allTabs = ['#MIO', '#RAV'] as const;
   const [activeTab, setActiveTab] = useState<string>('#MIO');
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const filtered = songs.filter((s) => {
     if (activeTab === '#MIO') return s.tag === 'MIO';
@@ -58,6 +62,33 @@ export const AllSongsScreen: React.FC<AllSongsScreenProps> = ({
         <div className="h-px bg-gray-200 mx-2 sm:mx-3" />
       </header>
 
+      {/* Backdrop para cerrar menú al tocar fuera */}
+      {openMenuId && (
+        <div className="fixed inset-0 z-0" onClick={() => setOpenMenuId(null)} />
+      )}
+      {/* Confirmación eliminar */}
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs" onClick={() => setConfirmDeleteId(null)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-bold text-[#00305d]">¿Eliminar canción?</h3>
+            <p className="text-sm text-gray-600">Esta acción no se puede deshacer. Se borrará de todas las listas.</p>
+            <div className="flex gap-2">
+              <button onClick={() => setConfirmDeleteId(null)} className="flex-1 py-2.5 bg-white border border-[#c3c6d1] rounded-xl text-sm font-bold text-[#43474f] hover:bg-[#f2f4f6] cursor-pointer">Cancelar</button>
+              <button
+                onClick={() => {
+                  if (onDeleteSong && confirmDeleteId) onDeleteSong(confirmDeleteId);
+                  setConfirmDeleteId(null);
+                  setOpenMenuId(null);
+                }}
+                className="flex-1 py-2.5 bg-[#ba1a1a] text-white rounded-xl text-sm font-bold hover:bg-[#a01818] cursor-pointer"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Listado */}
       <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 md:p-5 space-y-3 bg-[#f7f9fb]">
         {filtered.length === 0 ? (
@@ -89,14 +120,36 @@ export const AllSongsScreen: React.FC<AllSongsScreenProps> = ({
                   </span>
                 </button>
 
-                {/* Menú tres puntos - visual solo, no duplica acción de favorito */}
-                <button
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-9 h-9 hidden sm:flex items-center justify-center rounded-full text-gray-400 hover:text-[#1A477A] hover:bg-[#f2f4f6] cursor-pointer"
-                  title="Más opciones"
-                >
-                  <span className="material-symbols-outlined text-xl">more_vert</span>
-                </button>
+                {/* Menú tres puntos - eliminar canción */}
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === song.id ? null : song.id);
+                    }}
+                    className="w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:text-[#1A477A] hover:bg-[#f2f4f6] cursor-pointer"
+                    title="Más opciones"
+                  >
+                    <span className="material-symbols-outlined text-xl">more_vert</span>
+                  </button>
+                  {openMenuId === song.id && (
+                    <div
+                      className="absolute right-0 top-full mt-1 bg-white border border-[#c3c6d1] rounded-xl shadow-xl z-10 min-w-[160px] overflow-hidden"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        onClick={() => {
+                          setOpenMenuId(null);
+                          setConfirmDeleteId(song.id);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm font-medium text-[#ba1a1a] hover:bg-red-50 flex items-center gap-2 cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-lg">delete</span>
+                        Eliminar canción
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))

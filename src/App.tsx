@@ -22,21 +22,61 @@ const SONGS_KEY = 'rav_songs_v2';
 const CATEGORIES_KEY = 'rav_categories_v2';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<ScreenView>('login');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try { return localStorage.getItem('rav_auth') === '1'; } catch { return false; }
+  });
+  const [currentScreen, setCurrentScreen] = useState<ScreenView>(() => {
+    try { return localStorage.getItem('rav_auth') === '1' ? 'search' as ScreenView : 'login' as ScreenView; } catch { return 'login' as ScreenView; }
+  });
+
+  // Sincroniza sesión Supabase si está configurado (migrado)
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        setIsAuthenticated(true);
+        setCurrentScreen((prev) => prev === 'login' ? 'search' : prev);
+        try { localStorage.setItem('rav_auth', '1'); } catch {}
+      }
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setIsAuthenticated(true);
+        try { localStorage.setItem('rav_auth', '1'); } catch {}
+      } else {
+        // No cerrar automáticamente si hay fallback local; solo si no hay rav_auth
+        // Se maneja en handleLogout
+      }
+    });
+    return () => { sub.subscription.unsubscribe(); };
+  }, []);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // IDs de canciones seed a purgar para dejar app limpia #RAV
+  const LEGACY_SONG_IDS = new Set([
+    'senor-mi-dios','que-ruja-el-leon','quien-podra','piedra-angular','yeshua',
+    'vistenos-de-danza','resplandece-tu-luz','al-que-esta-sentado','jesus-es-agua-de-vida'
+  ]);
+
   const [songs, setSongs] = useState<Song[]>(() => {
     try {
       const raw = localStorage.getItem(SONGS_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Song[];
-        // merge con INITIAL_SONGS para no perder base: si hay ids nuevos mantenerlos
-        const ids = new Set(parsed.map((s) => s.id));
-        return [...parsed, ...INITIAL_SONGS.filter((s) => !ids.has(s.id))];
+        // Purga legacy: filtra canciones demo y limpia favoritos legacy
+        const filtered = parsed.filter((s) => !LEGACY_SONG_IDS.has(s.id));
+        const ids = new Set(filtered.map((s) => s.id));
+        // INITIAL_SONGS ahora vacío, no agrega nada
+        const merged = [...filtered, ...INITIAL_SONGS.filter((s) => !ids.has(s.id))];
+        // Si había legacy, sobrescribe localStorage limpio
+        if (filtered.length !== parsed.length) {
+          try { localStorage.setItem(SONGS_KEY, JSON.stringify(filtered)); } catch {}
+        }
+        return merged;
       }
     } catch {}
     return INITIAL_SONGS;
   });
-  const [selectedSong, setSelectedSong] = useState<Song>(INITIAL_SONGS[0]);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(INITIAL_SONGS[0] ?? null);
   const [previousScreen, setPreviousScreen] = useState<ScreenView>('search');
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
@@ -70,11 +110,19 @@ export default function App() {
     fontSize: 18,
   });
 
-  // Playlists con persistencia localStorage (preparado para Supabase)
+  // Playlists con persistencia localStorage (preparado para Supabase) + purga legacy
   const [playlists, setPlaylists] = useState<Playlist[]>(() => {
     try {
       const raw = localStorage.getItem(PLAYLISTS_KEY);
-      if (raw) return JSON.parse(raw) as Playlist[];
+      if (raw) {
+        const parsed = JSON.parse(raw) as Playlist[];
+        // Limpia referencias a canciones demo
+        const cleaned = parsed.map((p) => ({ ...p, songIds: p.songIds.filter((id) => !LEGACY_SONG_IDS.has(id)) }));
+        if (JSON.stringify(cleaned) !== raw) {
+          try { localStorage.setItem(PLAYLISTS_KEY, JSON.stringify(cleaned)); } catch {}
+        }
+        return cleaned;
+      }
     } catch {}
     return [];
   });
@@ -122,11 +170,29 @@ export default function App() {
             favoriteAt: r.favorite_at as number | undefined,
             createdAt: r.created_at as number | undefined,
           }));
+          // Purga automática de demos legacy tanto en memoria como en Supabase
+          const legacyInDb = mapped.filter((s) => LEGACY_SONG_IDS.has(s.id));
+          if (legacyInDb.length > 0) {
+            for (const s of legacyInDb) {
+              supabase.from('songs').delete().eq('id', s.id).then(() => {}).catch(() => {});
+            }
+          }
+          const cleanMapped = mapped.filter((s) => !LEGACY_SONG_IDS.has(s.id));
+          if (cleanMapped.length === 0 && legacyInDb.length > 0) {
+            // Si solo había demos, deja lista vacía
+            setSongs((prev) => prev.filter((p) => !LEGACY_SONG_IDS.has(p.id)));
+          } else {
+            setSongs((prev) => {
+              const ids = new Set(prev.map((s) => s.id));
+              const newFromDb = cleanMapped.filter((s) => !ids.has(s.id));
+              return newFromDb.length > 0 ? [...newFromDb, ...prev.filter((p) => !LEGACY_SONG_IDS.has(p.id))] : prev.filter((p) => !LEGACY_SONG_IDS.has(p.id));
+            });
+          }
+        } else {
+          // No hay DB, igual purga local por si quedó legacy
           setSongs((prev) => {
-            const ids = new Set(prev.map((s) => s.id));
-            const newFromDb = mapped.filter((s) => !ids.has(s.id));
-            // si hay canciones en DB que no están local, agregarlas
-            return newFromDb.length > 0 ? [...newFromDb, ...prev] : prev;
+            const filtered = prev.filter((s) => !LEGACY_SONG_IDS.has(s.id));
+            return filtered.length !== prev.length ? filtered : prev;
           });
         }
         if (dbCats && dbCats.length > 0) {
@@ -225,12 +291,26 @@ export default function App() {
   };
 
   const handleSelectSong = (song: Song) => {
+    if (!song) return;
     setPreviousScreen(currentScreen);
     setSelectedSong(song);
     setCurrentScreen('song');
   };
 
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    try { localStorage.setItem('rav_auth', '1'); } catch {}
+    setCurrentScreen('search');
+  };
+  const handleLogout = async () => {
+    setIsAuthenticated(false);
+    try { localStorage.removeItem('rav_auth'); } catch {}
+    if (supabase) { try { await supabase.auth.signOut(); } catch {} }
+    setCurrentScreen('login');
+  };
+
   const handleSetupComplete = (instrument: string, code: string) => {
+    if (!isAuthenticated) return;
     const idMap: Record<string, string> = {
       voz: 'Voz', guitarra: 'Guitarra', piano: 'Piano', ukelele: 'Ukelele',
       bateria: 'Batería', bajo: 'Bajo', cajon: 'Cajón', pandereta: 'Pandereta',
@@ -246,6 +326,7 @@ export default function App() {
   };
 
   const handleNavigate = (screen: ScreenView) => {
+    if (!isAuthenticated) { setCurrentScreen('login'); return; }
     if (screen === 'song') return;
     setCurrentScreen(screen);
   };
@@ -280,6 +361,12 @@ export default function App() {
     setSongs((prev) => [...mapped, ...prev]);
   };
 
+  const handleDeleteSong = (songId: string) => {
+    setSongs((prev) => prev.filter((s) => s.id !== songId));
+    setPlaylists((prev) => prev.map((p) => ({ ...p, songIds: p.songIds.filter((id) => id !== songId) })));
+    if (supabase) supabase.from('songs').delete().eq('id', songId).then(() => {}).catch(() => {});
+  };
+
   // Playlist handlers
   const handleCreatePlaylist = (name: string) => {
     const id = `pl_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
@@ -312,28 +399,33 @@ export default function App() {
     setPlaylists((prev) => prev.map((p) => p.id === selectedPlaylistId ? { ...p, songIds: newSongIds, updatedAt: Date.now() } : p));
   };
 
+  // Gate: sin auth no se renderiza nada más que login
+  if (!isAuthenticated) {
+    return (
+      <div className={`h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col ${userProfile.darkMode ? 'dark bg-slate-900 text-white' : 'bg-[#e9ecf0] text-[#191c1e]'}`}>
+        <LoginScreen onLoginSuccess={handleLoginSuccess} />
+      </div>
+    );
+  }
+
   return (
     <div className={`h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col ${userProfile.darkMode ? 'dark bg-slate-900 text-white' : 'bg-[#e9ecf0] text-[#191c1e]'}`}>
-      <NavigationDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} currentScreen={currentScreen} onNavigate={handleNavigate} />
+      <NavigationDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} currentScreen={currentScreen} onNavigate={handleNavigate} onLogout={handleLogout} />
 
       {currentScreen === 'search' && (
         <SearchSongsScreen songs={songs} onSelectSong={handleSelectSong} onOpenMenu={() => setIsMenuOpen(true)} onToggleFavorite={handleToggleFavorite} />
       )}
 
-      {currentScreen === 'song' && (
+      {currentScreen === 'song' && selectedSong && (
         <SongModeScreen song={selectedSong} onBack={() => setCurrentScreen(previousScreen)} onOpenMenu={() => setIsMenuOpen(true)} onOpenSettings={() => setCurrentScreen('settings')} cipherSystem={userProfile.cipherSystem} />
       )}
 
       {currentScreen === 'setup' && (
-        <InitialSetupScreen onComplete={handleSetupComplete} onBack={() => setCurrentScreen('login')} />
+        <InitialSetupScreen onComplete={handleSetupComplete} onBack={handleLogout} />
       )}
 
       {currentScreen === 'settings' && (
         <UserSettingsScreen profile={userProfile} onSave={handleSaveSettings} onCancel={() => setCurrentScreen('search')} onOpenMenu={() => setIsMenuOpen(true)} onAdminAccess={handleAdminLogin} isAdmin={isAdmin} />
-      )}
-
-      {currentScreen === 'login' && (
-        <LoginScreen onLoginSuccess={() => setCurrentScreen('setup')} />
       )}
 
       {currentScreen === 'playlist' && (
@@ -357,7 +449,7 @@ export default function App() {
       )}
 
       {currentScreen === 'allSongs' && (
-        <AllSongsScreen songs={songs} onSelectSong={handleSelectSong} onOpenMenu={() => setIsMenuOpen(true)} onToggleFavorite={handleToggleFavorite} />
+        <AllSongsScreen songs={songs} onSelectSong={handleSelectSong} onOpenMenu={() => setIsMenuOpen(true)} onToggleFavorite={handleToggleFavorite} onDeleteSong={handleDeleteSong} />
       )}
       {currentScreen === 'favorites' && (
         <FavoritesScreen songs={songs.filter((s) => s.isFavorite)} onSelectSong={handleSelectSong} onOpenMenu={() => setIsMenuOpen(true)} onToggleFavorite={handleToggleFavorite} />

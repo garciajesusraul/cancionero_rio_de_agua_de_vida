@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../utils/supabase';
 
 interface LoginScreenProps {
   onLoginSuccess: () => void;
@@ -6,21 +7,53 @@ interface LoginScreenProps {
   onOpenMenu?: () => void;
 }
 
+const VALID_USER = 'cancionerorav@gmail.com';
+const VALID_PASS = '4321';
+
 export const LoginScreen: React.FC<LoginScreenProps> = ({
   onLoginSuccess,
 }: Omit<LoginScreenProps, 'onOpenMenu'>) => {
-  const [username, setUsername] = useState('ejemplo@correo.com');
-  const [password, setPassword] = useState('••••••••');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    const u = username.trim().toLowerCase();
+    const p = password.trim();
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // Si Supabase está configurado, intenta auth real primero
+      if (supabase) {
+        const { error: sbError } = await supabase.auth.signInWithPassword({ email: u, password: p });
+        if (!sbError) {
+          try { localStorage.setItem('rav_auth', '1'); } catch {}
+          onLoginSuccess();
+          return;
+        }
+        // Si falla en Supabase pero credenciales son las hardcoded, permite fallback (para transición)
+        if (u === VALID_USER && p === VALID_PASS) {
+          console.warn('Supabase login falló, usando fallback local:', sbError?.message);
+          try { localStorage.setItem('rav_auth', '1'); } catch {}
+          onLoginSuccess();
+          return;
+        }
+        setError(sbError?.message || 'Usuario o contraseña incorrectos');
+        return;
+      }
+      // Fallback sin Supabase (modo actual)
+      if (u !== VALID_USER || p !== VALID_PASS) {
+        setError('Usuario o contraseña incorrectos');
+        return;
+      }
+      try { localStorage.setItem('rav_auth', '1'); } catch {}
       onLoginSuccess();
-    }, 1200);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -34,6 +67,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           <h1 className="text-xl sm:text-2xl lg:text-[26px] font-bold text-[#00305d] mt-2 leading-tight">
             Bienvenidos al rio
           </h1>
+          <p className="text-xs text-[#737780] mt-1">Acceso exclusivo #RAV</p>
         </header>
 
         {/* Login Card - compacto */}
@@ -53,7 +87,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="ejemplo@correo.com"
+                  placeholder="cancionerorav@gmail.com"
+                  autoComplete="username"
                   className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#737780] rounded-xl text-sm focus:outline-none focus:border-[#3ED5B6] focus:ring-4 focus:ring-[#3ED5B6]/15 font-medium"
                 />
               </div>
@@ -64,9 +99,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <label className="font-semibold text-xs sm:text-sm text-[#191c1e]" htmlFor="password">
                   Contraseña
                 </label>
-                <a href="#" onClick={(e) => e.preventDefault()} className="text-[11px] font-medium text-[#006b59] hover:underline">
-                  Olvidé mi contraseña
-                </a>
               </div>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#737780] group-focus-within:text-[#006b59]">
@@ -78,7 +110,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="••••"
+                  autoComplete="current-password"
                   className="w-full pl-10 pr-10 py-2.5 bg-white border border-[#737780] rounded-xl text-sm focus:outline-none focus:border-[#3ED5B6] focus:ring-4 focus:ring-[#3ED5B6]/15 font-medium"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#737780] hover:text-[#191c1e]">
@@ -87,28 +120,20 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               </div>
             </div>
 
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl px-3 py-2.5 flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">error</span>
+                {error}
+              </div>
+            )}
+
             <button type="submit" disabled={isLoading} className="w-full py-3 bg-[#1a477a] text-white font-bold text-sm rounded-xl shadow-xs hover:bg-[#00305d] active:scale-98 transition-all cursor-pointer disabled:opacity-75 min-h-[44px]">
               {isLoading ? 'Verificando...' : 'Iniciar Sesión'}
             </button>
           </form>
 
-          <div className="relative flex items-center py-3 sm:py-4">
-            <div className="flex-grow border-t border-[#c3c6d1]" />
-            <span className="flex-shrink mx-3 text-[10px] font-bold text-[#43474f] bg-white px-2 uppercase tracking-widest">O continúa con</span>
-            <div className="flex-grow border-t border-[#c3c6d1]" />
-          </div>
-
-          <button type="button" onClick={onLoginSuccess} className="w-full flex items-center justify-center gap-3 py-2.5 border border-[#c3c6d1] bg-white text-[#191c1e] font-semibold text-sm rounded-xl hover:bg-[#f2f4f6] active:scale-98 cursor-pointer min-h-[44px]">
-            <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.711c-.18-.54-.282-1.117-.282-1.711s.102-1.171.282-1.711V4.957H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.043l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.957l3.007 2.332c.708-2.127 2.692-3.711 5.036-3.711z"/></svg>
-            <span>Continuar con Google</span>
-          </button>
         </div>
 
-        <footer className="text-center shrink-0 py-1">
-          <p className="text-xs sm:text-sm text-[#43474f]">
-            ¿No tienes una cuenta? <button onClick={onLoginSuccess} className="font-bold text-[#006b59] ml-1 hover:underline cursor-pointer">Regístrate aquí</button>
-          </p>
-        </footer>
       </main>
 
       <div className="fixed bottom-0 right-0 w-48 h-48 opacity-10 pointer-events-none -z-10 translate-x-1/4 translate-y-1/4 hidden sm:block">
