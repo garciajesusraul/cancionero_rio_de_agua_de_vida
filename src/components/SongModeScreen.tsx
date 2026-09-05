@@ -1,8 +1,61 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Song, CipherSystem } from '../types';
+import { Song, CipherSystem, Category } from '../types';
 import { CHORD_DIAGRAMS, transposeChordName } from '../data/chords';
 import { audioEngine } from '../utils/AudioEngine';
 import { parseChordProToTokens, convertLegacyLineToChordPro } from '../utils/chordParser';
+import { parseSpacedSongBody } from '../utils/songParser';
+
+export const ADMIN_EMAIL = 'cancionerorav@gmail.com';
+
+function chordProToSpacedPair(chordPro: string): { chordLine: string; lyricLine: string } {
+  if (!chordPro) return { chordLine: '', lyricLine: '' };
+  const regex = /\[([^\]]+)\]|([^\[]+)/g;
+  let lyric = '';
+  const chords: { chord: string; pos: number }[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(chordPro)) !== null) {
+    if (m[1] !== undefined) {
+      chords.push({ chord: m[1], pos: lyric.length });
+    } else if (m[2] !== undefined) {
+      lyric += m[2];
+    }
+  }
+  if (chords.length === 0) return { chordLine: '', lyricLine: lyric };
+  if (!lyric.trim()) {
+    return { chordLine: chords.map((c) => `[${c.chord}]`).join(' '), lyricLine: '' };
+  }
+  const chordChars = Array(lyric.length).fill(' ');
+  // place chords, handle overflow
+  let maxLen = lyric.length;
+  chords.forEach((c) => {
+    const end = c.pos + c.chord.length;
+    if (end > maxLen) maxLen = end;
+  });
+  const lineArr = Array(maxLen).fill(' ');
+  chords.forEach((c) => {
+    for (let i = 0; i < c.chord.length; i++) {
+      if (c.pos + i < lineArr.length) lineArr[c.pos + i] = c.chord[i];
+    }
+  });
+  // trim trailing spaces
+  let chordLine = lineArr.join('').replace(/\s+$/, '');
+  return { chordLine, lyricLine: lyric };
+}
+
+function serializeSectionsToBody(sections: Song['sections']): string {
+  const out: string[] = [];
+  sections.forEach((sec) => {
+    if (sec.title) out.push(sec.title);
+    sec.lines.forEach((line) => {
+      const cp = line.chordPro || convertLegacyLineToChordPro(line.lyrics || '', line.chords);
+      const { chordLine, lyricLine } = chordProToSpacedPair(cp);
+      if (chordLine) out.push(chordLine);
+      out.push(lyricLine);
+    });
+    out.push(''); // blank line between sections
+  });
+  return out.join('\n').trim();
+}
 
 interface SongModeScreenProps {
   song: Song;
@@ -10,6 +63,11 @@ interface SongModeScreenProps {
   onOpenMenu?: () => void;
   onOpenSettings?: () => void;
   cipherSystem?: CipherSystem;
+  onUpdateSong?: (song: Song) => void;
+  isAdmin?: boolean;
+  authEmail?: string;
+  availableCategories?: Category[];
+  userCategories?: string[];
 }
 
 export const SongModeScreen: React.FC<SongModeScreenProps> = ({
@@ -18,6 +76,11 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
   onOpenMenu,
   onOpenSettings,
   cipherSystem = 'American',
+  onUpdateSong,
+  isAdmin = false,
+  authEmail = '',
+  availableCategories = [],
+  userCategories = [],
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(song.bpm || 70);
@@ -31,6 +94,24 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const [scrollSpeed, setScrollSpeed] = useState(1);
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
+
+  // Edit mode
+  const canEdit = isAdmin || authEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editArtist, setEditArtist] = useState('');
+  const [editTone, setEditTone] = useState('');
+  const [editBpm, setEditBpm] = useState(70);
+  const [editCategory, setEditCategory] = useState('');
+  const [editBody, setEditBody] = useState('');
+  const [editError, setEditError] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+    setIsEditing(false);
+    setBpm(song.bpm || 70);
+    setSemitones(0);
+  }, [song.id]);
 
   const scrollRef = useRef<number | null>(null);
 
@@ -137,6 +218,55 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
         document.exitFullscreen().catch(() => {});
       }
     }
+  };
+
+  // Edit handlers
+  const handleEnterEdit = () => {
+    if (!canEdit) return;
+    setEditTitle(song.title);
+    setEditArtist(song.artist);
+    setEditTone(song.originalKey);
+    setEditBpm(song.bpm || 70);
+    setEditCategory(song.category || song.tag === 'MIO' ? '#MIO' : '#RAV');
+    setEditBody(serializeSectionsToBody(song.sections));
+    setEditError(null);
+    setIsEditing(true);
+    audioEngine.stopAll();
+    setIsPlaying(false);
+  };
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditError(null);
+  };
+  const handleSaveEdit = () => {
+    setEditError(null);
+    if (!editTitle.trim()) { setEditError('Falta Título'); return; }
+    if (!editBody.trim()) { setEditError('Falta cuerpo de la canción'); return; }
+    // Determinar categoría permitida: ADMIN puede elegir cualquiera, resto solo #MIO o unidas
+    let finalCat = editCategory;
+    if (!isAdmin) {
+      const allowed = new Set(['#MIO', ...(userCategories || []).map((c) => c.toUpperCase())]);
+      if (!allowed.has(finalCat.toUpperCase())) finalCat = '#MIO';
+    }
+    finalCat = finalCat.toUpperCase().startsWith('#') ? finalCat.toUpperCase() : `#${finalCat.toUpperCase()}`;
+    const sections = parseSpacedSongBody(editBody);
+    if (sections.length === 0 || sections.every((s) => s.lines.length === 0)) {
+      setEditError('Cuerpo vacío o sin letras'); return;
+    }
+    const updated: Song = {
+      ...song,
+      title: editTitle.trim(),
+      artist: editArtist.trim() || 'Desconocido',
+      originalKey: editTone.trim() || 'C',
+      bpm: Number(editBpm) || 70,
+      category: finalCat,
+      tag: finalCat === '#MIO' ? 'MIO' : 'CONGRE',
+      sections,
+    };
+    if (onUpdateSong) onUpdateSong(updated);
+    setIsEditing(false);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2500);
   };
 
   // Print - genera hoja A4 real en ventana nueva (no window.print de la app)
@@ -319,14 +449,73 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
               <span className="material-symbols-outlined text-xl">settings</span>
             </button>
           )}
+          {/* Editar canción - solo ADMIN (cancionerorav@gmail.com) */}
+          {canEdit && onUpdateSong && (
+            <div className="flex items-center gap-2 ml-1">
+              <button
+                onClick={() => isEditing ? handleCancelEdit() : handleEnterEdit()}
+                className={`px-4 py-2 rounded-xl border text-xs font-bold tracking-wide uppercase transition-all cursor-pointer ${isEditing ? 'bg-white border-[#c3c6d1] text-[#43474f] hover:bg-[#f2f4f6]' : 'bg-white border-black text-black hover:bg-[#f2f4f6] shadow-xs'}`}
+              >
+                {isEditing ? 'cancelar' : 'editar cancion'}
+              </button>
+              {isEditing && (
+                <button
+                  onClick={handleSaveEdit}
+                  className="px-4 py-2 rounded-xl bg-[#1A477A] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#00305d] shadow-sm cursor-pointer"
+                >
+                  guardar cancion
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </nav>
 
       {/* Main Song Content - scroll interno para no exceder viewport */}
       <main className="flex-1 min-h-0 overflow-y-auto max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-4 sm:pt-6 pb-20 md:pb-6 flex gap-4 md:gap-8 relative w-full">
-        {/* Song Lyrics Area */}
-        <div className="flex-grow max-w-3xl transition-all duration-300 space-y-6 md:space-y-8 pr-0 md:pr-2">
-          {song.sections.map((section, secIdx) => (
+        {isEditing ? (
+          <div className="flex-grow max-w-3xl space-y-4 pr-0 md:pr-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-[#43474f] uppercase">Título *</label>
+                <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-[#c3c6d1] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#3ED5B6]" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-[#43474f] uppercase">Grupo / Artista</label>
+                <input value={editArtist} onChange={(e) => setEditArtist(e.target.value)} placeholder="Michael Bunster" className="w-full px-3 py-2.5 bg-white border border-[#c3c6d1] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#3ED5B6]" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-[#43474f] uppercase">Tono</label>
+                <input value={editTone} onChange={(e) => setEditTone(e.target.value)} placeholder="D" className="w-full px-3 py-2.5 bg-white border border-[#c3c6d1] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#3ED5B6]" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-[#43474f] uppercase">BPM</label>
+                <input type="number" value={editBpm} onChange={(e) => setEditBpm(Number(e.target.value))} className="w-full px-3 py-2.5 bg-white border border-[#c3c6d1] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#3ED5B6]" />
+              </div>
+              <div className="space-y-1 sm:col-span-2">
+                <label className="text-xs font-bold text-[#43474f] uppercase">Categoría</label>
+                <select value={editCategory} onChange={(e) => setEditCategory(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-[#c3c6d1] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#3ED5B6] cursor-pointer">
+                  {(isAdmin ? availableCategories : availableCategories.filter((c) => new Set(['#MIO', ...(userCategories || []).map((x) => x.toUpperCase())]).has(c.label.toUpperCase()))).map((c) => (
+                    <option key={c.id} value={c.label}>{c.label} — {c.name}</option>
+                  ))}
+                  {(isAdmin ? availableCategories : []).length === 0 && <option value={editCategory}>{editCategory}</option>}
+                </select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#43474f] uppercase">Letra + acordes (texto simple como archivo txt)</label>
+              <p className="text-[11px] text-gray-500">Ej:  <span className="font-mono">D                Dsus4</span> en línea superior y letra debajo. Secciones: Intro, Estrofa, Coro…</p>
+              <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} placeholder={`Intro: D - Dsus4 (x2)\nEstrofa\n   D                Dsus4\nHay una puerta abierta\n D                Dsus4\nMe dices que suba allá`} className="w-full h-[380px] sm:h-[440px] p-4 bg-white border-2 border-[#0ea5e9] rounded-xl text-sm font-mono leading-5 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9]/30 whitespace-pre overflow-auto" spellCheck={false} />
+            </div>
+            {editError && <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">{editError}</div>}
+            <div className="flex gap-2">
+              <button onClick={handleCancelEdit} className="flex-1 py-3 bg-white border border-[#c3c6d1] text-[#43474f] rounded-xl font-bold text-sm hover:bg-[#f2f4f6] cursor-pointer">Cancelar</button>
+              <button onClick={handleSaveEdit} className="flex-1 py-3 bg-[#1A477A] text-white rounded-xl font-bold text-sm hover:bg-[#00305d] cursor-pointer">Guardar cambios</button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-grow max-w-3xl transition-all duration-300 space-y-6 md:space-y-8 pr-0 md:pr-2">
+            {song.sections.map((section, secIdx) => (
             <div
               key={secIdx}
               className={`${
@@ -420,7 +609,7 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
             </div>
           ))}
         </div>
-
+        )}
         {/* Responsive Sidebar: horizontal bottom bar en móvil/tablet chica, vertical flotante en md+ */}
         {/* Mobile/Tablet horizontal bar */}
         <aside className="fixed bottom-0 left-0 right-0 z-40 flex md:hidden justify-center p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-white via-white to-transparent pointer-events-none">
@@ -604,6 +793,14 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
               Cerrar
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Toast Guardado */}
+      {showToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#1A477A] text-white px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2 text-sm font-semibold animate-in fade-in slide-in-from-bottom-2">
+          <span className="material-symbols-outlined text-lg">check_circle</span>
+          Guardado
         </div>
       )}
 

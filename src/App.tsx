@@ -21,10 +21,16 @@ const SELECTED_KEY = 'rav_selected_playlist';
 const SONGS_KEY = 'rav_songs_v2';
 const CATEGORIES_KEY = 'rav_categories_v2';
 
+const ADMIN_EMAIL = 'cancionerorav@gmail.com';
+
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     try { return localStorage.getItem('rav_auth') === '1'; } catch { return false; }
   });
+  const [authEmail, setAuthEmail] = useState<string>(() => {
+    try { return (localStorage.getItem('rav_auth_email') || '').toLowerCase(); } catch { return ''; }
+  });
+  const isEditAdmin = authEmail === ADMIN_EMAIL;
   const [currentScreen, setCurrentScreen] = useState<ScreenView>(() => {
     try { return localStorage.getItem('rav_auth') === '1' ? 'search' as ScreenView : 'login' as ScreenView; } catch { return 'login' as ScreenView; }
   });
@@ -34,14 +40,18 @@ export default function App() {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
+        const email = (data.session.user.email || '').toLowerCase();
         setIsAuthenticated(true);
+        if (email) { setAuthEmail(email); try { localStorage.setItem('rav_auth_email', email); } catch {} }
         setCurrentScreen((prev) => prev === 'login' ? 'search' : prev);
         try { localStorage.setItem('rav_auth', '1'); } catch {}
       }
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
+        const email = (session.user.email || '').toLowerCase();
         setIsAuthenticated(true);
+        if (email) { setAuthEmail(email); try { localStorage.setItem('rav_auth_email', email); } catch {} }
         try { localStorage.setItem('rav_auth', '1'); } catch {}
       } else {
         // No cerrar automáticamente si hay fallback local; solo si no hay rav_auth
@@ -297,14 +307,17 @@ export default function App() {
     setCurrentScreen('song');
   };
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (email: string) => {
+    const em = (email || '').toLowerCase();
     setIsAuthenticated(true);
-    try { localStorage.setItem('rav_auth', '1'); } catch {}
+    setAuthEmail(em);
+    try { localStorage.setItem('rav_auth', '1'); if (em) localStorage.setItem('rav_auth_email', em); } catch {}
     setCurrentScreen('search');
   };
   const handleLogout = async () => {
     setIsAuthenticated(false);
-    try { localStorage.removeItem('rav_auth'); } catch {}
+    setAuthEmail('');
+    try { localStorage.removeItem('rav_auth'); localStorage.removeItem('rav_auth_email'); } catch {}
     if (supabase) { try { await supabase.auth.signOut(); } catch {} }
     setCurrentScreen('login');
   };
@@ -367,6 +380,12 @@ export default function App() {
     if (supabase) supabase.from('songs').delete().eq('id', songId).then(() => {}).catch(() => {});
   };
 
+  const handleUpdateSong = (updated: Song) => {
+    // Mantiene id, favoritos y playlists intactos - ADMIN guarda para todos (Supabase upsert)
+    setSongs((prev) => prev.map((s) => s.id === updated.id ? { ...updated, isFavorite: s.isFavorite, favoriteAt: s.favoriteAt, createdAt: s.createdAt } : s));
+    setSelectedSong((prev) => prev && prev.id === updated.id ? { ...updated, isFavorite: prev.isFavorite, favoriteAt: prev.favoriteAt, createdAt: prev.createdAt } : prev);
+  };
+
   // Playlist handlers
   const handleCreatePlaylist = (name: string) => {
     const id = `pl_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
@@ -417,7 +436,7 @@ export default function App() {
       )}
 
       {currentScreen === 'song' && selectedSong && (
-        <SongModeScreen song={selectedSong} onBack={() => setCurrentScreen(previousScreen)} onOpenMenu={() => setIsMenuOpen(true)} onOpenSettings={() => setCurrentScreen('settings')} cipherSystem={userProfile.cipherSystem} />
+        <SongModeScreen song={selectedSong} onBack={() => setCurrentScreen(previousScreen)} onOpenMenu={() => setIsMenuOpen(true)} onOpenSettings={() => setCurrentScreen('settings')} cipherSystem={userProfile.cipherSystem} onUpdateSong={handleUpdateSong} isAdmin={isEditAdmin} authEmail={authEmail} availableCategories={categories} userCategories={userProfile.congregationCodes} />
       )}
 
       {currentScreen === 'setup' && (

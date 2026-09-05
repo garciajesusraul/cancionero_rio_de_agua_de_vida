@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { supabase } from '../utils/supabase';
 
 interface LoginScreenProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (email: string) => void;
   onNavigateRegister?: () => void;
   onOpenMenu?: () => void;
 }
 
-const VALID_USER = 'cancionerorav@gmail.com';
+export const ADMIN_EMAIL = 'cancionerorav@gmail.com';
+const VALID_USER = ADMIN_EMAIL;
 const VALID_PASS = '4321';
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({
@@ -30,15 +31,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       if (supabase) {
         const { error: sbError } = await supabase.auth.signInWithPassword({ email: u, password: p });
         if (!sbError) {
-          try { localStorage.setItem('rav_auth', '1'); } catch {}
-          onLoginSuccess();
+          try { localStorage.setItem('rav_auth', '1'); localStorage.setItem('rav_auth_email', u); } catch {}
+          onLoginSuccess(u);
           return;
         }
         // Si falla en Supabase pero credenciales son las hardcoded, permite fallback (para transición)
         if (u === VALID_USER && p === VALID_PASS) {
           console.warn('Supabase login falló, usando fallback local:', sbError?.message);
-          try { localStorage.setItem('rav_auth', '1'); } catch {}
-          onLoginSuccess();
+          try { localStorage.setItem('rav_auth', '1'); localStorage.setItem('rav_auth_email', u); } catch {}
+          onLoginSuccess(u);
           return;
         }
         setError(sbError?.message || 'Usuario o contraseña incorrectos');
@@ -49,8 +50,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         setError('Usuario o contraseña incorrectos');
         return;
       }
-      try { localStorage.setItem('rav_auth', '1'); } catch {}
-      onLoginSuccess();
+      try { localStorage.setItem('rav_auth', '1'); localStorage.setItem('rav_auth_email', u); } catch {}
+      onLoginSuccess(u);
     } finally {
       setIsLoading(false);
     }
