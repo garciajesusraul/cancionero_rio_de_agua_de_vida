@@ -80,7 +80,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
               <span className="material-symbols-outlined text-sm">logout</span> Cerrar sesión
             </button>
           )}
-          <span className="text-[10px] text-[#737780]/70 font-medium block">v3.5_casa_vacia • Río de Agua Viva</span>
+          <span className="text-[10px] text-[#737780]/70 font-medium block">v3.6_pelu_editsong • Río de Agua Viva</span>
         </div>
       </div>
     </div>
