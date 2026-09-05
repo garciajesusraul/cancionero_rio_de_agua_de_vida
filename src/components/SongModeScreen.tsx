@@ -472,7 +472,7 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
       </nav>
 
       {/* Main Song Content - scroll interno para no exceder viewport */}
-      <main className="flex-1 min-h-0 overflow-y-auto max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-4 sm:pt-6 pb-20 md:pb-6 flex gap-4 md:gap-8 relative w-full">
+      <main className="flex-1 min-h-0 overflow-y-auto overflow-x-auto scroll-visible max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-4 sm:pt-6 pb-20 md:pb-6 flex gap-4 md:gap-8 relative w-full">
         {isEditing ? (
           <div className="flex-grow max-w-3xl space-y-4 pr-0 md:pr-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -505,7 +505,7 @@ export const SongModeScreen: React.FC<SongModeScreenProps> = ({
             <div className="space-y-2">
               <label className="text-xs font-bold text-[#43474f] uppercase">Letra + acordes (texto simple como archivo txt)</label>
               <p className="text-[11px] text-gray-500">Ej:  <span className="font-mono">D                Dsus4</span> en línea superior y letra debajo. Secciones: Intro, Estrofa, Coro…</p>
-              <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} placeholder={`Intro: D - Dsus4 (x2)\nEstrofa\n   D                Dsus4\nHay una puerta abierta\n D                Dsus4\nMe dices que suba allá`} className="w-full h-[380px] sm:h-[440px] p-4 bg-white border-2 border-[#0ea5e9] rounded-xl text-sm font-mono leading-5 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9]/30 whitespace-pre overflow-auto" spellCheck={false} />
+              <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} placeholder={`Intro: D - Dsus4 (x2)\nEstrofa\n   D                Dsus4\nHay una puerta abierta\n D                Dsus4\nMe dices que suba allá`} className="w-full h-[380px] sm:h-[440px] p-4 bg-white border-2 border-[#0ea5e9] rounded-xl text-sm font-mono leading-5 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9]/30 whitespace-pre overflow-auto overflow-x-auto scroll-visible" spellCheck={false} />
             </div>
             {editError && <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">{editError}</div>}
             <div className="flex gap-2">

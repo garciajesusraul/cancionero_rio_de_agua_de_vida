@@ -242,7 +242,7 @@ export const BibleScreen: React.FC<BibleScreenProps> = ({ onOpenMenu }) => {
       )}
 
       {/* Contenido - con botón flotante en esquina superior derecha */}
-      <main className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 md:p-6 bg-white relative">
+      <main className="flex-1 min-h-0 overflow-y-auto scroll-visible p-4 sm:p-5 md:p-6 bg-white relative">
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
           className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-[#c3c6d1]/40 text-xs font-semibold text-[#1A477A] shadow-sm hover:bg-white/90 transition-all cursor-pointer"

@@ -90,7 +90,7 @@ export const AllSongsScreen: React.FC<AllSongsScreenProps> = ({
       )}
 
       {/* Listado */}
-      <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 md:p-5 space-y-3 bg-[#f7f9fb]">
+      <main className="flex-1 min-h-0 overflow-y-auto scroll-visible p-3 sm:p-4 md:p-5 space-y-3 bg-[#f7f9fb]">
         {filtered.length === 0 ? (
           <div className="text-center py-12 bg-white border border-dashed border-[#c3c6d1] rounded-xl">
             <p className="text-sm text-gray-500">No hay alabanzas en {activeTab}</p>

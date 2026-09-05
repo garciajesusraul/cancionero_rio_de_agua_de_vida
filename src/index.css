@@ -68,18 +68,46 @@
   box-shadow: 0 0 0 4px rgba(62, 213, 182, 0.15);
 }
 
-/* Custom scrollbars */
+/* Custom scrollbars - bien visibles, vertical y horizontal solo si sobresale */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #64748b #e2e8f0;
+}
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 12px;
+  height: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #e2e8f0;
+  border-radius: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 10px;
+  background: #64748b;
+  border-radius: 6px;
+  border: 2px solid #e2e8f0;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #1A477A;
+}
+::-webkit-scrollbar-corner {
+  background: #e2e8f0;
+}
+
+/* Clase para áreas con scroll bien visible */
+.scroll-visible {
+  scrollbar-width: auto;
+  scrollbar-color: #475569 #e2e8f0;
+}
+.scroll-visible::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+.scroll-visible::-webkit-scrollbar-thumb {
+  background: #475569;
+  border: 2px solid #e2e8f0;
+}
+.scroll-visible::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
 }
 

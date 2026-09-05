@@ -55,7 +55,7 @@ export const SearchSongsScreen: React.FC<SearchSongsScreenProps> = ({
         </button>
       </header>
 
-      <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 md:p-6 space-y-4">
+      <main className="flex-1 min-h-0 overflow-y-auto overflow-x-auto scroll-visible p-3 sm:p-4 md:p-6 space-y-4">
         <div className="relative shrink-0">
           <div className="relative shadow-xs rounded-xl border border-gray-200 overflow-hidden bg-white focus-within:ring-2 focus-within:ring-[#3ED5B6]">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">

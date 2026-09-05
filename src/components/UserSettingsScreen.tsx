@@ -94,7 +94,7 @@ export const UserSettingsScreen: React.FC<UserSettingsScreenProps> = ({
       </header>
 
       {/* Main Form Container - en desktop 2 columnas para aprovechar horizontal */}
-      <main className="w-full max-w-5xl flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 md:px-8 pt-4 md:pt-6 space-y-4 md:space-y-6">
+      <main className="w-full max-w-5xl flex-1 min-h-0 overflow-y-auto overflow-x-auto scroll-visible px-4 sm:px-6 md:px-8 pt-4 md:pt-6 space-y-4 md:space-y-6">
         {/* User Profile Card - ancho completo */}
         <section className="bg-white border border-[#c3c6d1]/60 rounded-2xl p-6 text-center shadow-2xs relative overflow-hidden flow-bg">
           <div className="relative inline-block mb-4">

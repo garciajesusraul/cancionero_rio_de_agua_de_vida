@@ -147,7 +147,7 @@ export const PlaylistScreen: React.FC<PlaylistScreenProps> = ({
 
   return (
     <div className="w-full max-w-6xl xl:max-w-7xl mx-auto h-[100dvh] max-h-[100dvh] flex flex-col bg-white border border-[#c3c6d1] shadow-sm font-sans overflow-hidden">
-      <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 md:p-6 space-y-4">
+      <main className="flex-1 min-h-0 overflow-y-auto overflow-x-auto scroll-visible p-3 sm:p-4 md:p-6 space-y-4">
         {/* a) Bloque agrupado con fondo azul más oscuro - botón + dropdown relacionados */}
         <section className="space-y-3 bg-[#dbeafe] border border-[#93b4e8]/40 rounded-xl p-3 sm:p-4">
           <div className="flex gap-2 items-center">
@@ -272,7 +272,7 @@ export const PlaylistScreen: React.FC<PlaylistScreenProps> = ({
                   <span className="material-symbols-outlined text-lg">close</span>
                 </button>
               </div>
-              <div className="max-h-[320px] overflow-y-auto p-4 space-y-4 text-sm leading-relaxed bg-[#f7f9fb]">
+              <div className="max-h-[320px] overflow-y-auto overflow-x-auto scroll-visible p-4 space-y-4 text-sm leading-relaxed bg-[#f7f9fb]">
                 {previewSong.sections.map((sec, si) => (
                   <div key={si} className={sec.isChorus ? 'bg-[#f2f4f6] p-3 rounded-lg border-l-4 border-[#00305d]' : ''}>
                     {sec.title && <div className={`text-[11px] font-bold tracking-widest uppercase mb-2 ${sec.isChorus ? 'text-[#00305d]' : 'text-gray-500'}`}>{sec.title}</div>}

@@ -67,7 +67,7 @@ export const FavoritesScreen: React.FC<FavoritesScreenProps> = ({
       </div>
 
       {/* Listado */}
-      <main className="flex-1 min-h-0 overflow-y-auto bg-[#f7f9fb] p-0">
+      <main className="flex-1 min-h-0 overflow-y-auto scroll-visible bg-[#f7f9fb] p-0">
         {sorted.length === 0 ? (
           <div className="text-center py-16 px-4">
             <span className="material-symbols-outlined text-4xl text-gray-300">favorite_border</span>

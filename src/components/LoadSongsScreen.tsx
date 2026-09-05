@@ -118,7 +118,7 @@ export const LoadSongsScreen: React.FC<LoadSongsScreenProps> = ({
         <button onClick={() => setActiveTab('bulk')} className={`flex-1 py-2.5 rounded-xl text-sm font-bold border cursor-pointer ${activeTab === 'bulk' ? 'bg-[#1A477A] text-white border-[#1A477A]' : 'bg-white text-[#43474f] border-[#c3c6d1]'}`}>Masiva .txt</button>
       </div>
 
-      <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 md:p-6 space-y-4">
+      <main className="flex-1 min-h-0 overflow-y-auto overflow-x-auto scroll-visible p-3 sm:p-4 md:p-6 space-y-4">
         {activeTab === 'manual' ? (
           <section className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -161,7 +161,7 @@ export const LoadSongsScreen: React.FC<LoadSongsScreenProps> = ({
             </div>
 
             <div className="space-y-2">
-              <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Colocá la canción acá..." className="w-full h-[320px] sm:h-[380px] p-4 bg-white border-2 border-[#0ea5e9] rounded-xl text-sm font-mono leading-5 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9]/30 whitespace-pre overflow-auto placeholder:text-gray-400" spellCheck={false} />
+              <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Colocá la canción acá..." className="w-full h-[320px] sm:h-[380px] p-4 bg-white border-2 border-[#0ea5e9] rounded-xl text-sm font-mono leading-5 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9]/30 whitespace-pre overflow-auto overflow-x-auto scroll-visible placeholder:text-gray-400" spellCheck={false} />
             </div>
 
             <div className="flex items-center gap-1.5 bg-[#f1f5f9] border border-gray-200 rounded-xl px-2 py-2">
@@ -174,7 +174,7 @@ export const LoadSongsScreen: React.FC<LoadSongsScreenProps> = ({
             </div>
 
             {/* Preview con acordes sincronizados */}
-            <div className="border border-[#c3c6d1]/50 rounded-xl bg-white p-4 space-y-4 overflow-x-auto">
+            <div className="border border-[#c3c6d1]/50 rounded-xl bg-white p-4 space-y-4 overflow-x-auto scroll-visible">
               {previewSections.length === 0 ? <p className="text-xs text-gray-400">Escribí el cuerpo arriba para ver preview</p> : previewSections.map((sec, si) => (
                 <div key={si} className={sec.isChorus ? 'bg-[#f2f4f6] p-3 rounded-lg border-l-4 border-[#00305d]' : ''}>
                   {sec.title && <div className={`text-[11px] font-bold tracking-widest uppercase mb-2 ${sec.isChorus ? 'text-[#00305d]' : 'text-gray-500'}`}>{sec.title}</div>}
