@@ -1,0 +1,27 @@
+Titulo=A UNA VOZ
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[D]Y en el cielo se oye un[G]a voz          [D]
+[D]Y en el cielo se oye u[G]na voz           [Bm7]
+[A]De millares de angeles   [G]
+[Bm7]De los se[A]res vivientes     [G]
+[D]Y anc[Em7]ianos que rodean tu [G]trono         [A]
+
+CORO
+[G]Y a una voz cantan [A]
+               D          G - D
+El cordero es digno
+Em7         D                  G-D
+De tomar el poder, la riqueza
+Em7         D            G-D
+Sabiduría y fortaleza
+A            Em7                D-G /BIS: Em7  D  G  A
+El honor y la gloria
+
+PUENTE
+[Bm7]Toda cosa creada [A]en el cielo y en la tierra
+[Bm7]Y debajo de la tierra[A]
+[G]Y en el mar y lo que esta en ella            [A]
+`

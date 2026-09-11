@@ -1,0 +1,35 @@
+Titulo=Enamorarme más
+Grupo=Pablo Medina
+Tono=C
+BPM=70
+Categoria=#RAV
+Intro: Bm7 - A - G
+Verso I
+[D]Cuando pienso en tu am[A]or y en tu f[Bm7]idelidad
+[G]No puedo hacer más q[D]ue postrarme y adorar
+[A]Cuando pienso en lo q[Bm7]ue he sido y hasta donde me has traído
+[G]Me asombro de ti
+Pre Coro
+[Bm]No me quiero[A] confo[G]rmar
+[Bm]He pro[A]bado y[A] quiero más
+
+CORO
+[E]Yo quiero enamo[B]rarme más de ti
+[C#m]Enséñame a amarte y[A] a vivir
+[B]Conforme a tu justi[A]cia y tu verdad
+[B]Con [E]mi vida quiero adorar
+[G#m7]Todo lo que tengo y lo que soy
+[C#m]Todo lo que he sido te lo doy
+[B]Que mi[A] vida sea para ti
+          (C#m  B  A)
+Como un perfume a tus pies
+Verso II
+Cuando pienso en tu cruz y en todo lo que has dado
+Tu sangre por mí, por borrar mi pecado
+Cuando pienso en tu mano, hasta aquí hemos llegado
+Por tu fidelidad
+
+PUENTE
+[A]Yo quiero enamorarme [B]más, yo quiero enamorarme más
+C#m                  F#  (volver al coro: F#m )
+Yo quiero enamorarme más de Ti

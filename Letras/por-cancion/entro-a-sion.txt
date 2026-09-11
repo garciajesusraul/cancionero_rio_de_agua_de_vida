@@ -1,0 +1,27 @@
+Titulo=Entro a Sion
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+Verso I
+[Em]Entro a Si[C]on, al lugar de mi seguridad
+[G]A la roca donde[D] firme estoy, a la roca donde fuerte soy
+Pre Coro
+[Em]Creo en ti, creo e[C]n ti, creo en ti
+[G]Creo en tus promesas, c[D]reo en tus palabras
+[Em]Creo en ti, creo e[C]n ti, creo en ti
+[G]Creo en lo que dices, c[D]reo en lo que hablas
+
+CORO
+[G]Jesucrist[D]o, hijo de Di[Em]os
+[C]Piedra preciosa[D], piedra angular
+[Em]Piedra probada, de cimiento estable
+[C]El que creyere no se apresure
+Verso II
+[Em]Dijo el Se[C]ñor, he puesto fundamento en Sion
+[G]La roca eterna [D]desechada fue, mas sobre ella edificaré
+Coro - opción acordes
+[C]Jesucristo, [F/D]hijo de Dios [C/E]
+[C/G]Piedra precio[G]sa, piedra angular
+[Fmaj7]Piedra probada, de cimiento estable
+[Am7/G]El que creyere no se[Fmaj7] apresure    [Am7]

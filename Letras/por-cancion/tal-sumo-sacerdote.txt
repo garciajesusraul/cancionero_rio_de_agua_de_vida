@@ -1,0 +1,23 @@
+Titulo=Tal Sumo Sacerdote
+Grupo=Ministerio Kerigma Internacional
+Tono=C
+BPM=70
+Categoria=#RAV
+Verso I
+[Am]El Señor ha jurado y n[F]o cambiará  [Am]
+[F]Él es sacerd[Am]ote para siempre
+[Dm]Por lo cual pu[E]ede salvar e[Am]ternamente
+[F]Viviendo siemp[E]re para inte[Am]rceder
+[F]Por nosotros, [Am]por no[G]sotros
+Verso II
+Quien habiendo ofrecido una ofrenda por los pecados
+Una sola vez y para siempre
+Justificando a los santificados
+Limpiando sus conciencias de obras muertas
+Con su sangre que ha derramado
+En la cruz
+
+CORO
+[C]Porque tal Sum[Dm]o Sacerdote [Em]nos[F] c[G]onvenía
+[C]Santo, inocent[Dm]e, inmaculad[Em]o, apartado del pecado
+[F]Hecho más subl[G]ime que los [Am]cielos

@@ -1,0 +1,28 @@
+Titulo=Cuan grande es Dios
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[C]El esplendor de un[G/B] Rey,[Am] vestido en Majestad
+[F]La Tierra alegre está
+[G]La Tierra alegre está
+[C]Cubierto está de l[G/B]uz, [Am]venció a la oscuridad
+[F]Y tiembla a Su voz
+[G]Tiembla a Su voz
+[C]Cuán Grande es Dios
+[G/B]Cántale, Cu[Am]án grande es Dios
+[F]Y todos lo verán
+[G]Cuán grande es D[C]ios
+[D]Día a Día El está
+[Bm]Y el tiempo está en El
+[G]Principio y el fin
+[A]Principio y el fin
+[D]La Trinidad en Dios 
+[Bm]El Padre, Hijo, Espíritu
+[G]Cordero y el León
+[A]Cordero y el León
+CORO 2:
+[C]Y Tu Nombre sobre todo es
+[G/B]Tu eres[Am] Digno de alabar
+[F]Y mi ser dirá
+[G]Cuan grande[C] es Dios

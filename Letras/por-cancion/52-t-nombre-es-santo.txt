@@ -1,0 +1,11 @@
+Titulo=52. Tú nombre es santo
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[Em]Yo entro al lugar más santo         [D]
+[C]A través del corde[D]ro de Dios    [Em]
+[Em]Y vengo tan solo a adorarte       [D]
+[C]Yo vengo a honrar al[D] Yo Soy       [Em]
+[G]Dios te ado[D]ro a t[Am]i, te ador[Em]o a ti
+[C]Pues tú nomb[D]re es santo,[Em] santo Dios

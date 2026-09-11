@@ -1,0 +1,22 @@
+Titulo=Nombre sobre todo nombre
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[[Verso]] 
+[D]No se aferró a [G]su gloria, y se[D]mejante a un ho[G]mbre
+[Bm]Se despojó, com[A]o siervo vivió
+[D]Y así mismo se [G]humilló, y como[D] hijo obedeció [G]
+[Bm]Hasta la muerte[A] y muerte de cruz
+[[Pre-Coro]] 
+[Em]Mas el grande D[A]ios, nuestro pa[G]pá, lo exaltó  [D]
+[Em]Y le dio un nom[A]bre que es sobre todo nombre
+[G]En el cielo y l[D]a tierra y debajo de la tierra
+[Em]Y en el nombre [A]de Jesús toda r[G]odilla se dobla[D]rá
+[Em]Y toda lengua c[A]onfesará que Je[Bm]sús es e[A]l Señor
+[[Coro]] 
+[D]Jesús n[A]ombre sobre [Bm]todo nombre, n[G]ombre sobre todo nombre
+[[Puente]] 
+[D]Su nombre es Ma[G]ravilloso, Cons[A]ejero
+[Bm]Dios fuerte, Nuestro Padre eterno
+[G]Príncipe de Paz

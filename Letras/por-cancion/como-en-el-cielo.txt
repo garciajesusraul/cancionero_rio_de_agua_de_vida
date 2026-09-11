@@ -1,0 +1,24 @@
+Titulo=Como en el Cielo
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[[Intro]]D - G/B - A - G - D - G
+[[Verso]]D        (A/D)   G
+La atmósfera cambiando está
+D        (A/D)   G
+Tu Espíritu está aquí
+D        (A/D)   G/B
+Es evidente tu mover
+D        (A/D)   G
+Tu Espíritu está aquí
+[[Pre-Coro]] 
+[Bm7]Llena este lugar derramando tu amor
+[F#m7/A]Tu amor me envuelve[G]
+[Bm7]He venido por Ti a tus brazos de amor
+[F#m7/A]Tu amor me envuelve[G]
+[[Coro]] 
+[A]Que tu [Bm7]poder descienda hoy
+[F#m7/A]Venga tu reino     [G]
+[A]Que se [Bm7]haga aquí tu voluntad
+[F#m7/A]Como en el cielo   [G]

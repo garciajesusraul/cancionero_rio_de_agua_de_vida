@@ -1,0 +1,22 @@
+Titulo=Rey de Justicia
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[Em]Dios poderoso y[D/F#] temible
+[C]Rey de [G]justici[C]a, Rey [Am]de paz
+[D/F#]Dios de propósi[Em]to eterno
+[C]Nada se[G] escapa[C] a tu v[Am]oluntad
+[C]Reinos y gobiern[D]os caerán
+[G]Pero tu trono fi[Em]rme está
+[C]Reinas con justi[D]cia y verdad
+[G]Incompar[D]able aut[C]oridad [Em]
+[G]Todas las naciones vendrán
+[Em]Todos los pueblos te adorarán
+[D]Y se postrarán y confesarán
+[C]Que Jesús es el Señor
+[Em] [C] [G] [D] 
+[Em]Rey de justicia eres Rey
+[C]Toda la creación te adora
+[G]Y confiesa que eres
+[D/F#] 

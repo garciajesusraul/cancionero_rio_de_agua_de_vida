@@ -1,0 +1,17 @@
+Titulo=TU REINAS
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+CORO
+[Em]//Tu reinas [Bm]vestido en majestad
+[D]ceñido de poder
+[A]amor y autoridad
+[Em]Tu reinas co[Bm]n justicia y verdad
+[D]sobre toda potestad
+[A]eres digno de alabar//
+Solo: // F Am F G //
+[D]Al que está sentado
+en el trono y al
+[Em]cordero sea [A]la gloria
+[G] 

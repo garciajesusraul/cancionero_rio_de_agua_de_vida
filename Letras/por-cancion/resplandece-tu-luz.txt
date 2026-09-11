@@ -1,0 +1,37 @@
+Titulo=Resplandece tu Luz
+Grupo=Natalia Aragón  Gerardo Ariel Weigandt
+Tono=C
+BPM=70
+Categoria=#RAV
+Tempo 128
+Intro: Bm7  A  D/F#  A/C#  G
+       Bm7  A  D/F#  A/C#  E  Em7
+
+VERSO
+[Bm7]Luz esta sembrada para el justo       [G7]
+[Bm7]Luz resplandece en las tinieblas para el que es recto                   [E]
+[G]El pueblo que sabe aclamarte a [A]la luz de tu rostr[D]o andará  [A]                   [Bm7]          [E]
+                                                   G                          F#sus4 - F#
+Y a los que moran en sombras, luz resplandecerá
+
+CORO
+[G]Re[A]splandece [D]tu luz, resplan[G]de[A]ce tu lu[Bm7]z
+[G]Re[A]splandece[D] tu luz, respl[Em7]ande[A]ce, resplan[Bm7]dece
+Puente I
+[G]Luz que disper[A]sa las tinieblas          [Bm7]
+Luz que da vista a los ciegos
+[G]Sea tu luz, sea tu luz aquí [A]            [Bm7]
+Puente II
+[Bm7]Tu luz remueva toda iniquidad
+[Gmaj7]Tu luz remueva toda maldad
+              Em79
+Tu luz remueva toda confusión
+                 G                              A  F#/A#
+Tu luz remueva toda oscuridad
+[Bm7]Ven y remueve toda iniquidad
+[Gmaj7]Ven y remueve toda maldad
+              Em79
+Ven y remueve toda confusión
+                  G                           A  F#/A#
+Ven y remueve toda confusión
+

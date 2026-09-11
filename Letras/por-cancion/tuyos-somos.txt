@@ -1,0 +1,23 @@
+Titulo=Tuyos Somos
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[[Intro]]Dm - C/E - F
+[[Verso]] 
+[Dm]Nos volv[C/E]emos a ti[F]       [Am/E]
+[Dm]De nuest[C/E]ra rebeli[F]ón a obediencia
+[Dm]Regresam[C/E]os a ti, [F]a tu co[Gm7]razón   [F/A]
+[Bb]Nos volv[C/E]emos a ti[F]       [Am/E]
+[Bb]De nuest[C]ra ingrat[Dm]itud
+[A/C#]A entreg[Dm]arte todo[C] lo que[Bb] somos e[Csus4]n adora[C]ción
+[[Coro]]F(omit3)
+Cumple aquí tus propósitos
+[Bb/F]Guíanos a tu voluntad
+[Dm]Eres Rey[C/E], eres nu[F]estro Dios
+[Gm]Tuyos so[F/A]mos, tuyo[Bb]s somos
+[[Puente]] 
+[Gm7]Venga tu[Asus4] reino [A]       [Dm]
+[C]Haz como quieras t[Bb]ú       [F/A]
+[Gm7]Eres el [Asus4]dueño y[A] Señor [Dm]
+[C]Te amamos, Jesús  [Bb]

@@ -1,0 +1,22 @@
+Titulo=La Canción Del Cordero / Digno Es El (Worthy)
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+Toma Tu Lugar
+Tono: A (forma de los acordes en el tono de G)
+Afinación: E A D G B E
+Capotraste en 2ª casa
+[C]Gloria, honra, alabanz[D]a y majestad
+[Em]Toda reverencia damos s[Bm]olo a ti
+[C]Gloria, honra, alabanz[D]a y majestad
+[Em]Toda reverencia damos so[Bm]lo a ti
+[C]Y que el Cordero reciba    [D]
+[G]La recompensa
+C7M
+De su sacrificio
+[C]Y que el Cordero reciba   [D]
+[G]La recompensa
+C7M
+De su sacrificio
+[C]Y que el Cordero reciba   [D]

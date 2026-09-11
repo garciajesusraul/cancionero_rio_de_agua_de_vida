@@ -1,0 +1,37 @@
+Titulo=QUEREMOS DARTE GLORIA
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+RE
+Queremos darte gloria
+      SIm
+Y alabanza
+SOL                 MIm
+Levantamos nuestras manos
+SOL          LA
+exaltándote Señor
+             RE
+Queremos darte gloria
+      SIm
+Y alabanza
+SOL                MIm
+Levantamos nuestras manos
+SOL            LA LA7
+exaltándote Señor
+           RE
+Grande eres tú
+   LA             SIm
+Grandes tus milagros son
+              SOL MIm
+No hay otro como tú
+LA            LA7
+No hay otro como tú
+          RE
+Grande eres tú,
+   LA         SIm
+Maravillas haces tú,
+              SOL MIm
+No hay otro como tú
+LA  LA7         RE
+No hay otro como tú

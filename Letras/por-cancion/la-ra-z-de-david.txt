@@ -1,0 +1,17 @@
+Titulo=La Raíz de David
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[G]Tu estas se[D]ntado,
+[Em]en Tu [Bm]trono, 
+[C]Angeles can[G]tan 
+[D]Santo Santo Santo
+[G]Los ancianos se [D]postran,
+[Em]Te rinden coron[Bm]as 
+[C]y a una vo[G]z el cielo[D] declara
+Coro:
+[C]He aquí[Em] el Leon de l[D]a tribu de Judá 
+[C]la raíz[Em] de David ha [D]vencido
+[C]Digno e[Em]s de tomar el[D] poder y autoridad 
+[C]todo es[Em] por El y par[D]a El

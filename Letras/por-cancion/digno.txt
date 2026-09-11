@@ -1,0 +1,19 @@
+Titulo=Digno
+Grupo=Desconocido
+Tono=C
+BPM=70
+Categoria=#RAV
+[D]Desde el a[G]manecer eres digno
+[D]Hasta el a[A]tardecer eres digno
+[Bm]De edad en[G] edad y hasta la eternidad
+[A]Eres digno[D] de alabar
+[D]Digno,[G] digno eres[D] digno[A] de alabar
+[D/F#]Digno,[G] digno eres[D] di[A]gno[D] de alabar
+[E]El cordero inmo[A]lado es digno
+[E]Mi redento[B]r y mi rey es digno
+[C#m]De edad en[A] edad y hasta la eternidad
+[E]Eres digno[B] de[E] alabar
+[E]Digno,[A] digno, ere[E]s dign[B]o de alabar
+[E/G#]Digno,[A] digno, ere[E]s dign[B]o d[E]e alabar
+Él es digno de abrir los sellos
+Por sus llagas sanados
