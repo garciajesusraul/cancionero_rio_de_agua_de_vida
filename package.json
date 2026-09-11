@@ -1,7 +1,7 @@
 {
   "name": "react-example",
   "private": true,
-  "version": "3.6_pelu_editsong",
+  "version": "4.0_robot-memoria-entre-compus",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
